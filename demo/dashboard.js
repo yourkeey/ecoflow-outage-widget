@@ -5,13 +5,10 @@ const element = (id) => document.getElementById(id);
 const write = (id, text) => { element(id).textContent = text; };
 const chart = element("history-chart");
 const spark = element("load-spark");
-const historyMinutes = 45;
+const historyMinutes = sim.historyMinutes;
 const mint = "#72e3bc";
-const blue = "#a3c5f4";
 const dateLabels = { today: "Сегодня", tomorrow: "Завтра", latest: "Последний график" };
-let state = sim.createSimulation();
-let paused = false;
-let chartMode = "power";
+const state = sim.createSimulation();
 let scheduleDay = "today";
 let selectedSample = null;
 
@@ -23,46 +20,25 @@ function timeRange([start, end]) {
   return sim.clock(start) + " — " + sim.clock(end);
 }
 
-function updateTrack(name, value) {
-  const progress = element(name + "-progress");
+function updateCharge(value) {
+  const progress = element("battery-progress");
+  write("charge", Math.round(value) + " %");
   progress.setAttribute("aria-valuenow", String(Math.round(value)));
   progress.dataset.tone = value < 20 ? "warning" : "normal";
-  element(name + "-fill").style.width = value + "%";
+  element("battery-fill").style.width = value + "%";
 }
 
 function render() {
   const live = sim.telemetry(state);
   const day = Math.floor(state.minute / sim.minutesPerDay);
   const time = state.minute % sim.minutesPerDay;
-  write("clock", "Демо · " + sim.clock(time) + " · день " + (day + 1) +
-    (paused ? " · пауза" : " · 1 мин/сек"));
-
-  const percent = state.energy / sim.capacity * 100;
-  write("charge", Math.round(percent) + " %");
-  write("battery-energy", Math.round(state.energy) + " / " + sim.capacity + " Вт·ч");
-  updateTrack("battery", percent);
-  const powerStatus = live.onGrid ? "питание от сети" : live.online ? "питание от батареи" : "батарея разряжена";
-  const status = element("power-status");
-  const statusText = "Демонстрация · " + powerStatus;
-  if (status.textContent !== statusText) status.textContent = statusText;
-  status.dataset.tone = live.online ? "normal" : "critical";
+  write("clock", "Демо · " + sim.clock(time) + " · 1 мин/сек");
+  write("power-status", "Обновлено " + sim.clock(time) + ":00");
+  updateCharge(state.energy / sim.capacity * 100);
   write("input-watts", live.input + " Вт");
   write("output-watts", live.output + " Вт");
-  const estimate = live.onGrid
-    ? (live.timeToFull ? "До полного заряда: " + duration(live.timeToFull) : "Батарея заряжена")
-    : "Время работы: " + duration(live.runtime ?? 0);
-  write("estimate", estimate);
-
-  for (const device of ["cpu", "gpu"]) {
-    write(device + "-temp", live.online ? live[device] + " °C" : "Офлайн");
-    write(device + "-load", live.online ? "Загрузка " + live[device + "Load"] + "%" : "");
-  }
-  for (const name of ["session", "weekly"]) {
-    const budget = state[name];
-    write(name + "-value", "Осталось " + Math.round(budget.left) + "%");
-    write(name + "-reset", "Сброс через " + duration(budget.reset - state.minute));
-    updateTrack(name, budget.left);
-  }
+  const remaining = live.onGrid ? live.timeToFull : live.runtime;
+  write("estimate", remaining > 0 ? "Осталось: " + duration(remaining) : "Оставшееся время: —");
   renderSchedule(day, time);
   drawCharts();
 }
@@ -141,44 +117,36 @@ function getPlot(canvas) {
   return { width, height, context };
 }
 
-function line(context, samples, key, x, y, color, width) {
+function drawLoadLine(context, samples, x, y, width) {
   context.beginPath();
-  let connected = false;
-  samples.forEach((sample, index) => {
-    const value = sample[key];
-    if (value === null) {
-      connected = false;
-    } else {
-      if (connected) context.lineTo(x(index), y(value));
-      else context.moveTo(x(index), y(value));
-      connected = true;
-    }
+  context.moveTo(x(0), y(samples[0].output));
+  samples.slice(1).forEach((sample, index) => {
+    context.lineTo(x(index + 1), y(sample.output));
   });
-  context.strokeStyle = color;
+  context.strokeStyle = mint;
   context.lineWidth = width;
   context.lineJoin = "round";
   context.stroke();
 }
 
-function drawSpark(samples) {
+function drawSpark(samples, max) {
   const plot = getPlot(spark);
   if (!plot) return;
   const { width, height, context } = plot;
   const last = samples.length - 1;
-  const max = Math.max(50, Math.ceil(Math.max(...samples.map((sample) => sample.output)) / 50) * 50);
   const x = (index) => 2 + (width - 5) * index / last;
   // Leave a little space above the data line for the most recent marker.
   const y = (value) => height - 2 - (height - 6) * value / max;
   context.fillStyle = "#b3c5d788";
   context.fillRect(2, height - 1, width - 5, 1);
-  line(context, samples, "output", x, y, mint, 1.4);
+  drawLoadLine(context, samples, x, y, 1.4);
   context.beginPath();
   context.arc(x(last), y(samples[last].output), 2, 0, Math.PI * 2);
   context.fillStyle = "#abefd7";
   context.fill();
 }
 
-function drawHistory(samples) {
+function drawHistory(samples, max, min, peak) {
   const plot = getPlot(chart);
   if (!plot) return;
   const { width, height, context } = plot;
@@ -186,10 +154,9 @@ function drawHistory(samples) {
   const right = width - 12;
   const top = 8;
   const bottom = height - 18;
-  const temperature = chartMode === "temperature";
-  const ticks = temperature ? [30, 50, 70, 90] : [0, 100, 200, 300];
+  const ticks = [0, max / 2, max];
   const x = (index) => left + (right - left) * index / historyMinutes;
-  const y = (value) => bottom - (bottom - top) * (value - ticks[0]) / (ticks.at(-1) - ticks[0]);
+  const y = (value) => bottom - (bottom - top) * value / max;
 
   context.font = "10px Segoe UI, sans-serif";
   context.fillStyle = "#bdcbe2";
@@ -208,30 +175,26 @@ function drawHistory(samples) {
     context.fillText(label, Math.min(x(index) - labelWidth / 2, width - labelWidth), height - 3);
   }
 
-  if (temperature) {
-    line(context, samples, "cpu", x, y, mint, 1.6);
-    line(context, samples, "gpu", x, y, blue, 1.6);
-  } else {
-    line(context, samples, "output", x, y, mint, 1.6);
-  }
+  drawLoadLine(context, samples, x, y, 1.6);
+  write("chart-stats", "Мин. " + min + " Вт · пик " + peak + " Вт");
   if (selectedSample === null) {
-    write("chart-value", "Наведите на график или используйте стрелки.");
+    write("chart-value", "Нагрузка за последние 45 минут");
     return;
   }
 
   const sample = samples[selectedSample];
   context.fillStyle = "#edf4f8";
   context.fillRect(x(selectedSample), top, 1, bottom - top);
-  const reading = temperature
-    ? (sample.online ? "CPU " + sample.cpu + " °C · GPU " + sample.gpu + " °C" : "ПК выключен")
-    : "Выход " + sample.output + " Вт";
-  write("chart-value", sim.clock(sample.minute % sim.minutesPerDay) + " · " + reading);
+  write("chart-value", sim.clock(sample.minute % sim.minutesPerDay) + " · " + sample.output + " Вт");
 }
 
 function drawCharts() {
-  const samples = state.history.slice(-historyMinutes - 1);
-  drawSpark(samples);
-  drawHistory(samples);
+  const samples = state.history;
+  const loads = samples.map((sample) => sample.output);
+  const peak = Math.max(...loads);
+  const max = Math.max(50, Math.ceil(peak / 50) * 50);
+  drawSpark(samples, max);
+  drawHistory(samples, max, Math.min(...loads), peak);
 }
 
 function bindSegments(id, update) {
@@ -263,23 +226,8 @@ function setWidgetVisible(visible) {
   element(visible ? "hide-widget" : "restore-widget").focus();
 }
 
-function replaceCurrentSample() {
-  state.history[state.history.length - 1] = sim.telemetry(state);
-}
-
 bindSegments("main-tabs", showPanel);
-bindSegments("grid-controls", (value) => { state.power = value; replaceCurrentSample(); });
-bindSegments("workload-controls", (value) => { state.workload = value; replaceCurrentSample(); });
 bindSegments("schedule-controls", (value) => { scheduleDay = value; });
-bindSegments("chart-controls", (value) => {
-  chartMode = value;
-  const labels = value === "temperature" ? ["CPU · °C", "GPU · °C"] : ["Выход · Вт"];
-  element("chart-legend").replaceChildren(...labels.map((label) => {
-    const item = document.createElement("span");
-    item.textContent = label;
-    return item;
-  }));
-});
 
 element("open-schedule").addEventListener("click", () => {
   showPanel("schedule");
@@ -287,8 +235,11 @@ element("open-schedule").addEventListener("click", () => {
   render();
 });
 element("open-history").addEventListener("click", () => {
-  element("station-details").open = true;
-  chart.focus();
+  const history = element("load-history");
+  const open = history.hidden;
+  history.hidden = !open;
+  element("open-history").setAttribute("aria-expanded", String(open));
+  if (open) chart.focus();
   drawCharts();
 });
 element("hide-widget").addEventListener("click", () => setWidgetVisible(false));
@@ -296,30 +247,14 @@ element("restore-widget").addEventListener("click", () => setWidgetVisible(true)
 element("open-settings").addEventListener("click", () => element("settings").showModal());
 element("close-settings").addEventListener("click", () => element("settings").close());
 
-element("pause").addEventListener("click", () => {
-  paused = !paused;
-  element("pause").setAttribute("aria-pressed", String(paused));
-  write("pause", paused ? "Продолжить" : "Пауза");
-  write("speed-label", paused ? "Время · пауза" : "Время · 1 мин/сек");
-  render();
-});
-
-function step(minutes) {
-  sim.advance(state, minutes);
+function step() {
+  sim.advance(state);
   render();
 }
 
 for (const button of document.querySelectorAll(".refresh")) {
-  button.addEventListener("click", () => step(1));
+  button.addEventListener("click", step);
 }
-element("step").addEventListener("click", () => step(15));
-element("reset").addEventListener("click", () => {
-  state = sim.createSimulation();
-  selectedSample = null;
-  selectSegment(element("grid-controls"), state.power);
-  selectSegment(element("workload-controls"), state.workload);
-  render();
-});
 
 chart.addEventListener("pointermove", (event) => {
   const bounds = chart.getBoundingClientRect();
@@ -340,5 +275,5 @@ chart.addEventListener("keydown", (event) => {
 const resize = new ResizeObserver(drawCharts);
 resize.observe(spark);
 resize.observe(chart);
-window.setInterval(() => { if (!paused) step(1); }, 1000);
+window.setInterval(step, 1000);
 render();

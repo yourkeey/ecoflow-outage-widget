@@ -24,10 +24,10 @@
       </div>
 
       <section id="station" aria-label="Станция">
-        <p class="status" id="power-status" role="status">Демонстрация · питание от сети</p>
+        <p class="status" id="power-status">Обновлено 14:32:00</p>
         <div class="battery-row">
-          <div class="charge-number" id="charge" aria-label="Заряд батареи">76 %</div>
-          <button type="button" class="sparkline quiet" id="open-history" aria-label="Открыть историю нагрузки">
+          <div class="charge-number" id="charge">90 %</div>
+          <button type="button" class="sparkline quiet" id="open-history" aria-label="История нагрузки" aria-controls="load-history" aria-expanded="false">
             <canvas id="load-spark" aria-hidden="true"></canvas>
             <span>45 мин</span>
           </button>
@@ -36,8 +36,15 @@
             <strong id="output-watts">— Вт</strong>
           </div>
         </div>
-        <div class="track" id="battery-progress" role="progressbar" aria-label="Заряд батареи" aria-valuemin="0" aria-valuemax="100" aria-valuenow="76"><div id="battery-fill"></div></div>
+        <div class="track" id="battery-progress" role="progressbar" aria-label="Заряд батареи" aria-valuemin="0" aria-valuemax="100" aria-valuenow="90"><div id="battery-fill"></div></div>
         <p class="remaining" id="estimate">Время работы: —</p>
+
+        <section class="history detail-card" id="load-history" aria-labelledby="history-label" hidden>
+          <h2 class="caption" id="history-label">Нагрузка · 45 мин</h2>
+          <canvas id="history-chart" tabindex="0" aria-label="История нагрузки. Стрелками влево и вправо можно выбрать точку." aria-describedby="chart-value"></canvas>
+          <p id="chart-value" class="hint">Нагрузка за последние 45 минут</p>
+          <p id="chart-stats" class="hint"></p>
+        </section>
 
         <section class="outage-card" aria-labelledby="outage-label">
           <div class="row">
@@ -58,37 +65,8 @@
           <div class="detail-card">
             <dl class="readings">
               <div><dt class="caption">Вход</dt><dd id="input-watts">— Вт</dd></div>
-              <div><dt class="caption">Энергия батареи</dt><dd id="battery-energy">— Вт·ч</dd></div>
+              <div><dt class="caption">Напоминания</dt><dd class="hint">За 2 ч и за 15 мин</dd><dd class="hint">Заряд ниже 20%</dd></div>
             </dl>
-            <dl class="readings telemetry">
-              <div><dt class="caption">Температура CPU</dt><dd id="cpu-temp">—</dd><dd class="hint" id="cpu-load"></dd></div>
-              <div><dt class="caption">Температура GPU</dt><dd id="gpu-temp">—</dd><dd class="hint" id="gpu-load"></dd></div>
-            </dl>
-            <div class="history">
-              <div class="row">
-                <h2 class="caption">История · 45 мин</h2>
-                <div class="segments" role="group" aria-label="Показания на графике" id="chart-controls">
-                  <button type="button" data-value="power" aria-pressed="true">Нагрузка</button>
-                  <button type="button" data-value="temperature" aria-pressed="false">Темп.</button>
-                </div>
-              </div>
-              <div id="chart-legend" class="legend"><span>Выход · Вт</span></div>
-              <canvas id="history-chart" tabindex="0" aria-label="История показаний. Стрелками влево и вправо можно выбрать точку." aria-describedby="chart-value"></canvas>
-              <p id="chart-value" class="hint">Наведите на график или используйте стрелки.</p>
-            </div>
-            <div class="limits">
-              <h2 class="caption">Лимиты ИИ</h2>
-              <div class="limit">
-                <div class="row"><span>Сеанс</span><strong id="session-value">38% осталось</strong></div>
-                <div class="track" id="session-progress" role="progressbar" aria-label="Остаток лимита сеанса" aria-valuemin="0" aria-valuemax="100" aria-valuenow="38"><div id="session-fill"></div></div>
-                <p class="hint" id="session-reset"></p>
-              </div>
-              <div class="limit">
-                <div class="row"><span>Неделя</span><strong id="weekly-value">64% осталось</strong></div>
-                <div class="track" id="weekly-progress" role="progressbar" aria-label="Остаток недельного лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><div id="weekly-fill"></div></div>
-                <p class="hint" id="weekly-reset"></p>
-              </div>
-            </div>
           </div>
         </details>
 
@@ -96,7 +74,7 @@
           <button type="button" id="open-settings"><span class="gear" aria-hidden="true">⚙</span> Настройки</button>
           <div class="actions">
             <button type="button" class="icon refresh" title="Обновить показания" aria-label="Обновить показания">↻</button>
-            <button type="button" id="pause" aria-pressed="false">Пауза</button>
+            <button type="button" disabled title="Закрепление окна доступно в Windows-виджете">Закрепить</button>
           </div>
         </div>
         <p class="footnote" id="clock">Демо · 14:32</p>
@@ -137,32 +115,10 @@
 
   <dialog class="settings glass" id="settings" aria-labelledby="settings-title">
     <header class="row">
-      <h2 id="settings-title">Настройки демо</h2>
+      <h2 id="settings-title">Настройки</h2>
       <button type="button" class="icon quiet" id="close-settings" aria-label="Закрыть настройки">×</button>
     </header>
-    <div class="settings-group">
-      <p class="caption" id="power-label">Источник питания</p>
-      <div class="segments" role="group" aria-labelledby="power-label" id="grid-controls">
-        <button type="button" data-value="auto" aria-pressed="true">По графику</button>
-        <button type="button" data-value="grid" aria-pressed="false">Сеть</button>
-        <button type="button" data-value="outage" aria-pressed="false">Отключение</button>
-      </div>
-    </div>
-    <div class="settings-group">
-      <p class="caption" id="workload-label">Нагрузка ПК</p>
-      <div class="segments" role="group" aria-labelledby="workload-label" id="workload-controls">
-        <button type="button" data-value="idle" aria-pressed="false">Простой</button>
-        <button type="button" data-value="dev" aria-pressed="true">Код</button>
-        <button type="button" data-value="render" aria-pressed="false">Рендер</button>
-      </div>
-    </div>
-    <div class="settings-group">
-      <p class="caption" id="speed-label">Время · 1 мин/сек</p>
-      <div class="segments" role="group" aria-labelledby="speed-label">
-        <button type="button" id="step">+15 мин</button>
-        <button type="button" id="reset">Сбросить</button>
-      </div>
-    </div>
+    <p class="settings-note">Подключение к EcoFlow, управление зарядкой и настройки уведомлений доступны в Windows-виджете.</p>
   </dialog>
 </body>
 </html>

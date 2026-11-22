@@ -38,7 +38,8 @@ button {
   font: inherit;
   cursor: pointer;
 }
-button:hover { background: #5b719076; color: var(--mint); border-color: #b8c6e2; }
+button:hover:not(:disabled) { background: #5b719076; color: var(--mint); border-color: #b8c6e2; }
+button:disabled { opacity: .55; cursor: default; }
 button[aria-pressed="true"] { background: #607c89a0; color: var(--mint); }
 button:focus-visible, summary:focus-visible, canvas:focus-visible { outline: 2px solid var(--mint); outline-offset: 2px; }
 .quiet { border-color: transparent; background: transparent; }
@@ -49,7 +50,6 @@ button:focus-visible, summary:focus-visible, canvas:focus-visible { outline: 2px
 .main-tabs button { color: var(--light); background: transparent; border: 0; padding: 5px 2px; min-height: 30px; }
 .main-tabs button[aria-pressed="true"] { color: var(--mint); background: #607c89a0; }
 .status { color: var(--muted); font-size: 11px; }
-.status[data-tone="critical"] { color: #ffb7ac; }
 .battery-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 11px; align-items: center; padding: 3px 0 9px; }
 .charge-number { font-size: clamp(39px, 14vw, 54px); line-height: 1.15; font-weight: 600; white-space: nowrap; }
 .sparkline { display: grid; width: 100%; padding: 0; min-height: 0; text-align: center; border-radius: 4px; }
@@ -62,8 +62,6 @@ button:focus-visible, summary:focus-visible, canvas:focus-visible { outline: 2px
 .track { height: 5px; background: #657f9a62; overflow: hidden; }
 .track > div { height: 100%; width: 0; background: #72e3bc; transition: width 240ms ease; }
 .track[data-tone="warning"] > div { background: var(--amber); }
-#weekly-fill { background: #a3c5f4; }
-#weekly-progress[data-tone="warning"] > div { background: var(--amber); }
 .remaining { color: #c9d3e3; margin: 12px 0 14px; }
 .outage-card { border: 1px solid #7c91b888; border-radius: 13px; background: #45527266; padding: 11px 13px; }
 .schedule-link { padding: 0; min-height: 17px; font-size: 10px; border: 0; border-radius: 4px; }
@@ -85,14 +83,7 @@ summary:hover { color: var(--mint); }
 .readings { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .readings dd { font-size: 16px; margin-top: 2px; }
 .readings .hint { font-size: 10px; }
-.telemetry, .history, .limits { margin-top: 11px; padding-top: 11px; border-top: 1px solid #7c91b856; }
-.history canvas { width: 100%; height: 103px; display: block; border-radius: 4px; }
-.legend { display: flex; gap: 10px; margin-top: 6px; color: var(--muted); font-size: 10px; }
-.legend span::before { content: ""; display: inline-block; width: 8px; height: 2px; margin: 0 4px 3px 0; background: #72e3bc; }
-.legend span:nth-child(2)::before { background: #a3c5f4; }
-.limit { margin-top: 8px; }
-.limit strong { color: var(--mint); font-weight: 600; }
-.limit .track { margin: 4px 0; }
+.history canvas { width: 100%; height: 103px; display: block; border-radius: 4px; margin-top: 6px; }
 .footer-controls { min-height: 34px; }
 .gear { font: 15px/1 "Segoe UI Symbol", sans-serif; margin-right: 3px; }
 .footnote { margin-top: 10px; color: #abbad2; font-size: 10px; line-height: 1.4; }
@@ -113,11 +104,7 @@ summary:hover { color: var(--mint); }
 .settings { width: min(calc(100% - 16px), 360px); padding: 16px; color: #edf4f8; font-size: 12px; }
 .settings h2 { font-size: 19px; font-weight: 600; }
 .settings::backdrop { background: #090b1599; }
-.settings-group { margin: 13px 0 2px; }
-.settings-group .segments { margin-top: 5px; }
-.segments { display: flex; gap: 3px; }
-.segments button { min-height: 27px; padding: 3px 6px; font-size: 11px; }
-.settings-group button { flex: 1; min-height: 32px; }
+.settings-note { margin-top: 10px; color: var(--muted); line-height: 1.5; }
 .restore { align-self: start; min-height: 42px; margin-top: 16px; }
 @media (max-width: 320px) {
   .widget { padding: 12px; }

@@ -4,12 +4,7 @@ const RiverSimulation = (() => {
   const capacity = 768;
   const minutesPerDay = 1440;
   const efficiency = 0.9;
-  const historyLength = 61;
-  const profiles = {
-    idle: { watts: 64, cpuTemp: 40, gpuTemp: 38, cpuLoad: 9, gpuLoad: 8, aiRate: 0 },
-    dev: { watts: 128, cpuTemp: 58, gpuTemp: 49, cpuLoad: 42, gpuLoad: 22, aiRate: 0.45 },
-    render: { watts: 252, cpuTemp: 79, gpuTemp: 75, cpuLoad: 86, gpuLoad: 92, aiRate: 0.85 },
-  };
+  const historyMinutes = 45;
   const schedules = [
     [[360, 450], [900, 1020], [1170, 1260]],
     [[510, 630], [810, 930], [1200, 1290]],
@@ -50,20 +45,15 @@ const RiverSimulation = (() => {
   }
 
   function telemetry(state, minute = state.minute) {
-    const onGrid = state.power === "grid" || (state.power === "auto" && !scheduleAt(minute).active);
+    const onGrid = !scheduleAt(minute).active;
     const online = onGrid || state.energy > 0;
-    const profile = profiles[state.workload];
     const drift = 0.65 * Math.sin(minute / 4.8) + 0.35 * Math.cos(minute / 2.4);
-    const output = online ? Math.round(profile.watts + drift * 18) : 0;
+    const output = online ? Math.round(84 + drift * 18) : 0;
     const remainingEnergy = capacity - state.energy;
     const chargeWatts = onGrid && remainingEnergy > 0.01 ? Math.min(300, 55 + remainingEnergy * 1.6) : 0;
     return {
       minute, onGrid, online, output, chargeWatts,
       input: onGrid ? output + Math.round(chargeWatts) : 0,
-      cpu: online ? Math.round(profile.cpuTemp + drift * 5) : null,
-      gpu: online ? Math.round(profile.gpuTemp + drift * 4) : null,
-      cpuLoad: online ? Math.round(profile.cpuLoad + drift * 8) : null,
-      gpuLoad: online ? Math.round(profile.gpuLoad - drift * 7) : null,
       runtime: !onGrid && online ? state.energy * efficiency * 60 / output : null,
       // Taper near full charge, so use the same model as the minute-by-minute simulation.
       timeToFull: chargeWatts ? estimateCharge(remainingEnergy) : 0,
@@ -81,16 +71,9 @@ const RiverSimulation = (() => {
 
   function createSimulation() {
     const minute = 14 * 60 + 32;
-    const state = {
-      minute,
-      power: "auto",
-      workload: "dev",
-      energy: capacity * 0.76,
-      session: { left: 38, reset: minute + 108, period: 300 },
-      weekly: { left: 64, reset: minute + 896, period: 7 * minutesPerDay },
-    };
-    state.history = Array.from({ length: historyLength }, (_, index) =>
-      telemetry(state, minute + index - historyLength + 1));
+    const state = { minute, energy: capacity * 0.9 };
+    state.history = Array.from({ length: historyMinutes + 1 }, (_, index) =>
+      telemetry(state, minute + index - historyMinutes));
     return state;
   }
 
@@ -102,22 +85,12 @@ const RiverSimulation = (() => {
       if (capacity - state.energy <= 0.01) state.energy = capacity;
       state.minute += 1;
 
-      const usage = sample.online ? profiles[state.workload].aiRate : 0;
-      for (const [budget, rate] of [[state.session, usage], [state.weekly, usage / 12]]) {
-        if (state.minute === budget.reset) {
-          budget.left = 100;
-          budget.reset += budget.period;
-        } else {
-          budget.left = Math.max(0, budget.left - rate);
-        }
-      }
-
       state.history.push(telemetry(state));
-      if (state.history.length > historyLength) state.history.shift();
+      if (state.history.length > historyMinutes + 1) state.history.shift();
     }
   }
 
-  return { capacity, minutesPerDay, clock, duration, windows, scheduleAt, telemetry, createSimulation, advance };
+  return { capacity, historyMinutes, minutesPerDay, clock, duration, windows, scheduleAt, telemetry, createSimulation, advance };
 })();
 
 if (typeof module !== "undefined") module.exports = RiverSimulation;

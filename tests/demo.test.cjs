@@ -16,36 +16,32 @@ test("automatic power switches at the scheduled start and end", () => {
   assert.equal(sim.scheduleAt(22 * 60).tomorrow, true);
 });
 
-test("manual outage drains the battery, then grid restores telemetry", () => {
+test("an outage can empty the battery, which recharges once power returns", () => {
   const state = sim.createSimulation();
-  const coding = sim.telemetry(state);
-  state.power = "outage";
-  state.workload = "render";
-  const rendering = sim.telemetry(state);
-  assert.ok(rendering.cpu > coding.cpu && rendering.gpu > coding.gpu);
-  assert.ok(rendering.output > coding.output);
-  sim.advance(state, 200);
-  assert.equal(state.energy, 0);
-  assert.equal(sim.telemetry(state).cpu, null);
-  assert.equal(sim.telemetry(state).output, 0);
-  const weekly = state.weekly.left;
+  sim.advance(state, sim.scheduleAt(state.minute).minutes);
+  state.energy = 2;
+  assert.ok(sim.telemetry(state).runtime > 0);
   sim.advance(state, 10);
-  assert.equal(state.weekly.left, weekly);
-  state.power = "grid";
+  assert.equal(state.energy, 0);
+  assert.equal(sim.telemetry(state).runtime, null);
+  assert.equal(sim.telemetry(state).output, 0);
+  sim.advance(state, sim.scheduleAt(state.minute).minutes);
+  assert.equal(sim.telemetry(state).onGrid, true);
+  sim.advance(state, 30);
+  assert.ok(state.energy > 0);
+  // There is a second evening outage before the longer overnight charging window.
+  sim.advance(state, 21 * 60 - state.minute);
   const estimate = sim.telemetry(state).timeToFull;
+  assert.ok(estimate > 0 && estimate < sim.scheduleAt(state.minute).minutes);
   sim.advance(state, estimate);
   assert.equal(state.energy, sim.capacity);
   assert.equal(sim.telemetry(state).online, true);
 });
 
-test("usage resets on schedule and telemetry keeps a rolling hour", () => {
+test("load history keeps a rolling 45-minute window across midnight", () => {
   const state = sim.createSimulation();
-  sim.advance(state, 30);
-  assert.ok(state.session.left < 38 && state.weekly.left < 64);
-  sim.advance(state, state.session.reset - state.minute);
-  assert.equal(state.session.left, 100);
-  sim.advance(state, state.weekly.reset - state.minute);
-  assert.equal(state.weekly.left, 100);
-  assert.equal(state.history.at(-1).minute - state.history[0].minute, 60);
-  assert.ok(new Set(state.history.map((sample) => sample.cpu)).size > 1);
+  sim.advance(state, sim.minutesPerDay - state.minute + 15);
+  assert.equal(state.history.at(-1).minute, state.minute);
+  assert.equal(state.history.at(-1).minute - state.history[0].minute, 45);
+  assert.ok(new Set(state.history.map((sample) => sample.output)).size > 1);
 });
