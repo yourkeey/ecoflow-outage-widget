@@ -8,12 +8,41 @@ A Windows 11 tray widget that displays EcoFlow RIVER 2 Pro readings, estimated r
 [![EcoFlow](https://img.shields.io/badge/Hardware-EcoFlow_RIVER_2_Pro-black)](https://github.com/yourkeey/ecoflow-outage-widget)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-GitHub_Pages-2ea44f?logo=github)](https://yourkeey.github.io/ecoflow-outage-widget/)
 
-[![Windows widget with sample data](docs/screenshot.png)](https://yourkeey.github.io/ecoflow-outage-widget/)
-
 > [!TIP]
 > **Live interactive demo** · [yourkeey.github.io/ecoflow-outage-widget](https://yourkeey.github.io/ecoflow-outage-widget/)
 >
 > Runs in the browser with sample EcoFlow readings and outage intervals for queue 2.2 in Kyiv time. Click the mini chart for 45 minutes of load history and use **Отключения** (Outages) to browse the schedule. No credentials or physical hardware needed.
+
+## Screenshots
+
+<table>
+  <thead>
+    <tr>
+      <th align="center">Station</th>
+      <th align="center">Outage schedule</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center" valign="top">
+        <a href="docs/screenshot.png">
+          <img src="docs/screenshot.png" width="320" alt="Windows widget showing battery charge, power draw, and a countdown to the next outage">
+        </a>
+      </td>
+      <td align="center" valign="top">
+        <a href="docs/outage-schedule.png">
+          <img src="docs/outage-schedule.png" width="320" alt="Outage schedule tab with a daily timeline and three sample outage windows">
+        </a>
+      </td>
+    </tr>
+    <tr>
+      <td align="center">Charge, load history, and outage countdown</td>
+      <td align="center">Daily timeline and individual outage windows</td>
+    </tr>
+  </tbody>
+</table>
+
+Both screens use sample data.
 
 ---
 
