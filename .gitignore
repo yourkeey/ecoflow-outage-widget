@@ -1,0 +1,27 @@
+# Credentials, local overrides and generated application state
+.env
+.env.*
+!.env.example
+*.clixml
+/connection.xml
+/alerts.json
+/charge-automations.json
+/load-history*.json
+/notification-settings*.json
+/outage-alerts.json
+/preferences.json
+/schedule-alerts.json
+/schedule-cache.json
+/cek-channel.html
+/cek-latest.jpg
+
+# Local captures and build/test outputs
+/*.png
+/*.ico
+/*.exe
+/widget-smoke.ps1
+__pycache__/
+*.py[cod]
+*.tmp
+/.release-check/
+/.sites-preview/

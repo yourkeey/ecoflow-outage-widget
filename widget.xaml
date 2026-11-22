@@ -1,0 +1,163 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+ Title="RIVER 2 Pro" Width="360" SizeToContent="Height" ShowInTaskbar="False"
+ WindowStyle="None" ResizeMode="NoResize" AllowsTransparency="True" Background="Transparent"
+ FontFamily="Segoe UI" Foreground="#EDF4F8" WindowStartupLocation="CenterScreen"
+ UseLayoutRounding="True" SnapsToDevicePixels="True">
+ <Window.Resources>
+  <Style x:Key="GlassScrollButton" TargetType="RepeatButton">
+   <Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ScrollBar">
+   <Setter Property="Width" Value="10"/><Setter Property="Background" Value="Transparent"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar">
+    <Grid Background="{TemplateBinding Background}">
+     <Track Name="PART_Track" IsDirectionReversed="True" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" ViewportSize="{TemplateBinding ViewportSize}" Value="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+      <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource GlassScrollButton}"/></Track.DecreaseRepeatButton>
+      <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="#788BAB" CornerRadius="4" Margin="2,0"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+      <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource GlassScrollButton}"/></Track.IncreaseRepeatButton>
+     </Track>
+    </Grid>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="Button">
+   <Setter Property="Foreground" Value="#D7DEEF"/><Setter Property="Background" Value="#59455479"/>
+   <Setter Property="BorderBrush" Value="#8A8193BA"/><Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="11,8"/><Setter Property="FontSize" Value="11"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+    <Border Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="10" Padding="{TemplateBinding Padding}">
+     <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+    </Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#765B7190"/><Setter Property="Foreground" Value="#89EDCA"/><Setter TargetName="Surface" Property="BorderBrush" Value="#A5CBBBEF"/></Trigger>
+     <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Background" Value="#735C6E85"/></Trigger>
+     <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Opacity" Value="0.45"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="CheckBox">
+   <Setter Property="Cursor" Value="Hand"/><Setter Property="Foreground" Value="#C0CAE0"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox">
+    <Border Name="Surface" Background="#59475476" BorderBrush="#8A8193BA" BorderThickness="1" CornerRadius="10" Padding="10,8"><ContentPresenter/></Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsChecked" Value="True"><Setter Property="Foreground" Value="#89EDCA"/><Setter TargetName="Surface" Property="Background" Value="#7250736D"/><Setter TargetName="Surface" Property="BorderBrush" Value="#A5CBBBEF"/></Trigger>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="BorderBrush" Value="#A5CBBBEF"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="DisclosureButton" TargetType="Button">
+   <Setter Property="Foreground" Value="#B4C4DC"/><Setter Property="Background" Value="Transparent"/>
+   <Setter Property="Cursor" Value="Hand"/><Setter Property="FontSize" Value="11"/>
+   <Setter Property="Padding" Value="8,6"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button">
+    <Border Name="Surface" Background="{TemplateBinding Background}" CornerRadius="8" Padding="{TemplateBinding Padding}">
+     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+      <ContentPresenter VerticalAlignment="Center"/>
+      <Path Name="Chevron" Data="M 1,2 L 5,6 L 9,2" Width="10" Height="8" Margin="8,1,0,0" Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" RenderTransformOrigin="0.5,0.5" VerticalAlignment="Center"/>
+     </StackPanel>
+    </Border>
+    <ControlTemplate.Triggers>
+     <Trigger Property="Tag" Value="Open"><Setter TargetName="Chevron" Property="RenderTransform"><Setter.Value><RotateTransform Angle="180"/></Setter.Value></Setter></Trigger>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#6254617F"/><Setter Property="Foreground" Value="#9AF0D1"/></Trigger>
+     <Trigger Property="IsPressed" Value="True"><Setter TargetName="Surface" Property="Background" Value="#4E536E69"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+ </Window.Resources>
+ <Border BorderThickness="1" CornerRadius="20" Padding="16" Margin="4">
+  <Border.Background><DrawingBrush Stretch="Fill"><DrawingBrush.Drawing><DrawingGroup>
+   <GeometryDrawing Geometry="M0,0 L1,0 1,1 0,1 Z"><GeometryDrawing.Brush><LinearGradientBrush StartPoint="0,0" EndPoint="1,1"><GradientStop Color="#F4384266" Offset="0"/><GradientStop Color="#F42B3454" Offset="0.52"/><GradientStop Color="#F43A355D" Offset="1"/></LinearGradientBrush></GeometryDrawing.Brush></GeometryDrawing>
+   <GeometryDrawing Geometry="M0,0 L1,0 1,1 0,1 Z"><GeometryDrawing.Brush><RadialGradientBrush Center="0.18,0.04" GradientOrigin="0.18,0.04" RadiusX="0.85" RadiusY="0.58"><GradientStop Color="#50B8C6FF" Offset="0"/><GradientStop Color="#1E8C9FDC" Offset="0.5"/><GradientStop Color="#008C9FDC" Offset="1"/></RadialGradientBrush></GeometryDrawing.Brush></GeometryDrawing>
+   <GeometryDrawing Geometry="M0,0 L1,0 1,1 0,1 Z"><GeometryDrawing.Brush><RadialGradientBrush Center="0.96,0.95" GradientOrigin="0.96,0.95" RadiusX="0.75" RadiusY="0.55"><GradientStop Color="#3E9D86DB" Offset="0"/><GradientStop Color="#00836BB6" Offset="1"/></RadialGradientBrush></GeometryDrawing.Brush></GeometryDrawing>
+  </DrawingGroup></DrawingBrush.Drawing></DrawingBrush></Border.Background>
+  <Border.BorderBrush><LinearGradientBrush StartPoint="0,0" EndPoint="0,1"><GradientStop Color="#E0C4C9FF" Offset="0"/><GradientStop Color="#997B8DBA" Offset="0.48"/><GradientStop Color="#D0A6A1DC" Offset="1"/></LinearGradientBrush></Border.BorderBrush>
+  <Border.Effect><DropShadowEffect Color="#000000" BlurRadius="8" ShadowDepth="1" Opacity="0.24"/></Border.Effect>
+  <Grid>
+   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+   <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="30"/></Grid.ColumnDefinitions>
+    <TextBlock Text="ECOFLOW  /  RIVER 2 PRO" FontSize="11" Foreground="#B8C3DA" VerticalAlignment="Center"/>
+    <Button Name="Close" Grid.Column="1" Width="30" Height="30" Padding="0" Background="Transparent" BorderThickness="0" ToolTip="Скрыть в трей"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE711;" FontSize="12"/></Button>
+   </Grid>
+   <Border Grid.Row="1" Background="#A0252C46" CornerRadius="12" Padding="4" Margin="0,0,0,15">
+    <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+     <Button Name="TabStation" Content="Станция" FontSize="12" Padding="4,7" Background="#A0607C89" Foreground="#89EDCA" BorderThickness="0"/>
+     <Button Name="TabSchedule" Grid.Column="1" Content="Отключения · 2.2" FontSize="12" Padding="4,7" Background="Transparent" BorderThickness="0"/>
+    </Grid>
+   </Border>
+   <ScrollViewer Name="ContentScroll" Grid.Row="2" MaxHeight="520" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" CanContentScroll="False">
+    <StackPanel>
+     <StackPanel Name="StationPanel">
+      <TextBlock Name="Status" Text="Подключение…" FontSize="11" Foreground="#A7B4CE" TextTrimming="CharacterEllipsis"/>
+      <Grid Margin="0,3,0,8"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+       <TextBlock Name="Soc" Text="— %" FontSize="54" FontWeight="SemiBold"/>
+       <Grid Name="LoadChartHost" Grid.Column="1" Margin="10,0,12,0" VerticalAlignment="Center" Background="Transparent" ToolTipService.InitialShowDelay="180" ToolTipService.ShowDuration="30000">
+        <StackPanel><Canvas Name="LoadChart" Height="35" ClipToBounds="True"/><TextBlock Name="LoadChartCaption" Text="45 мин" FontSize="8" Foreground="#A0B5CC" HorizontalAlignment="Center" Margin="0,4,0,0"/></StackPanel>
+       </Grid>
+       <StackPanel Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right"><TextBlock Text="НАГРУЗКА" FontSize="9" Foreground="#A7B4CE" HorizontalAlignment="Right"/><TextBlock Name="Output" Text="— Вт" FontSize="23" HorizontalAlignment="Right"/></StackPanel>
+      </Grid>
+      <ProgressBar Name="Charge" Height="5" Maximum="100" Value="0" Foreground="#72E3BC" Background="#62657F9A" BorderThickness="0"/>
+      <TextBlock Name="Remaining" Text="Время работы: —" FontSize="12" Foreground="#C9D3E3" Margin="0,12,0,14"/>
+      <Border Name="OutageCard" Background="#66455272" BorderBrush="#887C91B8" BorderThickness="1" CornerRadius="13" Padding="13,11">
+       <StackPanel>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+         <TextBlock Name="OutageLabel" Text="ГРАФИК · ЧЕРГА 2.2" FontSize="9" Foreground="#A2D8C9" VerticalAlignment="Center"/>
+         <Button Name="OutageOpenSchedule" Grid.Column="1" Content="График ↗" Background="Transparent" BorderThickness="0" Padding="0" FontSize="10" Foreground="#A8E4D4"/>
+        </Grid>
+        <TextBlock Name="OutageCountdown" Text="Проверяю график…" FontSize="21" FontWeight="SemiBold" Margin="0,5,0,2"/>
+        <TextBlock Name="OutageHint" Text="Время — Киев" FontSize="10" Foreground="#B3C5D7" TextWrapping="Wrap"/>
+        <StackPanel Name="StationIntervalsSection" Visibility="Collapsed" Margin="0,11,0,0">
+         <TextBlock Name="StationIntervalsDate" Text="СЕГОДНЯ" FontSize="9" Foreground="#A5B7CE" Margin="0,0,0,6"/>
+         <Canvas Name="StationIntervals" Height="18" Background="#75505F7E" ClipToBounds="True"/>
+         <Canvas Name="StationIntervalsAxis" Height="12" Margin="0,5,0,0"/>
+        </StackPanel>
+       </StackPanel>
+      </Border>
+      <Button Name="StationDetailsToggle" Content="Подробнее" Style="{StaticResource DisclosureButton}" HorizontalAlignment="Left" Margin="-8,4,0,5"/>
+      <Border Name="StationDetails" Visibility="Collapsed" Background="#65505C7D" CornerRadius="10" Padding="11" Margin="0,0,0,11">
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+        <StackPanel><TextBlock Text="ВХОД" FontSize="9" Foreground="#A7B4CE"/><TextBlock Name="Input" Text="— Вт" FontSize="20" Margin="0,2,0,0"/></StackPanel>
+        <StackPanel Grid.Column="1"><TextBlock Text="НАПОМИНАНИЯ" FontSize="9" Foreground="#A7B4CE"/><TextBlock Name="ReminderPreferencesSummary" Text="за 2 ч и за 15 мин" FontSize="11" Margin="0,5,0,0" TextWrapping="Wrap"/><TextBlock Name="LowBatteryPreferencesSummary" Text="Заряд ниже 20%" FontSize="10" Foreground="#A7B4CE" Margin="0,2,0,0"/></StackPanel>
+       </Grid>
+      </Border>
+      <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="42"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+       <Button Name="Settings" HorizontalAlignment="Left"><StackPanel Orientation="Horizontal"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE713;" Margin="0,0,6,0" VerticalAlignment="Center"/><TextBlock Text="Настройки"/></StackPanel></Button>
+       <Button Name="Refresh" Grid.Column="1" Width="34" Padding="0" ToolTip="Обновить данные станции"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72C;" FontSize="14"/></Button>
+       <CheckBox Name="Pin" Grid.Column="2" Content="Закрепить" FontSize="11" VerticalAlignment="Center" ToolTip="Поверх остальных окон"/>
+      </Grid>
+      <TextBlock Name="Freshness" Text="Автообновление · 30 с" FontSize="10" Foreground="#9AAAC6" Margin="0,10,0,1"/>
+     </StackPanel>
+     <StackPanel Name="SchedulePanel" Visibility="Collapsed">
+      <Grid Margin="0,0,0,13"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
+       <StackPanel><Button Name="ScheduleOpenChannel" Content="ЦЕК ↗" Foreground="#A7B4CE" FontSize="9" Background="Transparent" BorderThickness="0" Padding="0" HorizontalAlignment="Left"/><TextBlock Name="ScheduleDate" Text="Сегодня" FontSize="23" FontWeight="SemiBold" Margin="0,3,0,0"/></StackPanel>
+       <Border Name="QueueBadge" Grid.Column="1" Width="42" Height="42" VerticalAlignment="Center" Background="#79597872" CornerRadius="11"><TextBlock Text="2.2" Foreground="#89EDCA" FontSize="17" FontWeight="SemiBold" HorizontalAlignment="Center" VerticalAlignment="Center"/></Border>
+      </Grid>
+      <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions>
+       <Button Name="DayToday" Content="Сегодня" Padding="3,6"/>
+       <Button Name="DayTomorrow" Grid.Column="1" Content="Завтра" Padding="3,6" Margin="5,0"/>
+       <Button Name="DayLatest" Grid.Column="2" Content="Последний" Padding="3,6"/>
+      </Grid>
+      <TextBlock Name="ScheduleNotice" Text="Проверяю публикации…" Foreground="#B5A98F" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,12"/>
+      <Border Background="#664B5778" CornerRadius="12" Padding="13,11"><StackPanel>
+       <TextBlock Name="ScheduleCompactLabel" Text="ЧЕРГА 2.2" FontSize="9" Foreground="#A7B4CE"/>
+       <TextBlock Name="ScheduleCompactValue" Text="Ожидаем график" FontSize="21" FontWeight="SemiBold" Margin="0,5,0,3"/>
+       <TextBlock Name="ScheduleSummary" Text="" FontSize="11" Foreground="#BFCBE0" TextWrapping="Wrap"/>
+      </StackPanel></Border>
+      <Grid Margin="0,10,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="34"/><ColumnDefinition Width="34"/></Grid.ColumnDefinitions>
+       <Button Name="ScheduleDetailsToggle" Content="Подробнее" Style="{StaticResource DisclosureButton}" HorizontalAlignment="Left" Margin="-8,0,0,0"/>
+       <Button Name="ScheduleRefresh" Grid.Column="1" Height="30" Padding="0" Background="Transparent" BorderThickness="0" ToolTip="Обновить график"><TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE72C;" FontSize="13"/></Button>
+       <Button Name="ScheduleOpenSource" Grid.Column="2" Height="30" Content="↗" FontSize="16" Padding="0" Background="Transparent" BorderThickness="0" ToolTip="Открыть исходный пост"/>
+      </Grid>
+      <StackPanel Name="ScheduleDetails" Visibility="Collapsed" Margin="0,10,0,0">
+       <TextBlock Text="ПЛАНОВЫЕ ИНТЕРВАЛЫ" FontSize="9" Foreground="#A7B4CE" Margin="0,0,0,8"/>
+       <Canvas Name="ScheduleTimeline" Height="18" ClipToBounds="True" Background="#75505F7E"/>
+       <Canvas Name="ScheduleAxis" Height="12" Margin="0,5,0,11"/>
+       <StackPanel Name="ScheduleIntervals"/>
+       <TextBlock Name="ScheduleMeta" Text="" FontSize="10" Foreground="#A7B4CE" TextWrapping="Wrap" Margin="0,8,0,0"/>
+       <TextBlock Text="График может измениться. Аварийные отключения — вне расписания." FontSize="10" Foreground="#9CAAC4" TextWrapping="Wrap" Margin="0,8,0,0"/>
+      </StackPanel>
+      <TextBlock Name="ScheduleAlertsStatus" Text="Уведомления: за 2 ч и за 15 мин" FontSize="10" Foreground="#9AAAC6" TextWrapping="Wrap" Margin="0,11,0,1"/>
+     </StackPanel>
+    </StackPanel>
+   </ScrollViewer>
+  </Grid>
+ </Border>
+</Window>

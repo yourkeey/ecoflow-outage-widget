@@ -1,0 +1,108 @@
+<Window xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Title="Настройки EcoFlow Widget" Width="400" SizeToContent="Height" ResizeMode="NoResize" WindowStartupLocation="CenterOwner" WindowStyle="None" AllowsTransparency="True" Background="Transparent" Foreground="#F1F4FC" FontFamily="Segoe UI" UseLayoutRounding="True">
+ <Window.Resources>
+  <Style x:Key="GlassScrollButton" TargetType="RepeatButton">
+   <Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="Transparent"/></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="ScrollBar">
+   <Setter Property="Width" Value="10"/><Setter Property="Background" Value="Transparent"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="ScrollBar">
+    <Grid Background="{TemplateBinding Background}">
+     <Track Name="PART_Track" IsDirectionReversed="True" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" ViewportSize="{TemplateBinding ViewportSize}" Value="{Binding Value, RelativeSource={RelativeSource TemplatedParent}, Mode=TwoWay}">
+      <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Style="{StaticResource GlassScrollButton}"/></Track.DecreaseRepeatButton>
+      <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="#788BAB" CornerRadius="4" Margin="2,0"/></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+      <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Style="{StaticResource GlassScrollButton}"/></Track.IncreaseRepeatButton>
+     </Track>
+    </Grid>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="CheckBox"><Setter Property="Foreground" Value="#E0E6F4"/><Setter Property="Cursor" Value="Hand"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="CheckBox">
+    <Grid Margin="0,11"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="42"/></Grid.ColumnDefinitions>
+     <ContentPresenter VerticalAlignment="Center"/>
+     <Border Name="Track" Grid.Column="1" Background="#6A7899" CornerRadius="10" Height="22" Width="40"><Ellipse Name="Knob" Fill="#C3CCDC" Width="16" Height="16" HorizontalAlignment="Left" Margin="3,0"/></Border>
+    </Grid>
+    <ControlTemplate.Triggers>
+     <Trigger Property="IsChecked" Value="True"><Setter TargetName="Track" Property="Background" Value="#5B9585"/><Setter TargetName="Knob" Property="HorizontalAlignment" Value="Right"/><Setter TargetName="Knob" Property="Fill" Value="#D0FAE9"/></Trigger>
+     <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Knob" Property="Fill" Value="#E0FFF1"/></Trigger>
+     <Trigger Property="IsEnabled" Value="False"><Setter TargetName="Track" Property="Opacity" Value="0.4"/><Setter TargetName="Knob" Property="Opacity" Value="0.6"/></Trigger>
+    </ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="Button"><Setter Property="Background" Value="#70556A8A"/><Setter Property="Foreground" Value="#E7EDFA"/><Setter Property="Cursor" Value="Hand"/><Setter Property="Padding" Value="12,9"/><Setter Property="BorderBrush" Value="#907F95BA"/><Setter Property="BorderThickness" Value="1"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Button"><Border Name="Surface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="9" Padding="{TemplateBinding Padding}"><ContentPresenter HorizontalAlignment="Center"/></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="Surface" Property="Background" Value="#87738BA3"/></Trigger><Trigger Property="IsEnabled" Value="False"><Setter TargetName="Surface" Property="Opacity" Value="0.4"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style x:Key="SliderRepeat" TargetType="RepeatButton">
+   <Setter Property="Focusable" Value="False"/><Setter Property="Template"><Setter.Value><ControlTemplate TargetType="RepeatButton"><Border Background="{TemplateBinding Background}" Height="5" CornerRadius="3"/></ControlTemplate></Setter.Value></Setter>
+  </Style>
+  <Style TargetType="Slider">
+   <Setter Property="Height" Value="32"/><Setter Property="Cursor" Value="Hand"/>
+   <Setter Property="Template"><Setter.Value><ControlTemplate TargetType="Slider">
+    <Grid><Border Height="5" Background="#6A7898" CornerRadius="3" Margin="8,0"/>
+     <Track Name="PART_Track">
+      <Track.DecreaseRepeatButton><RepeatButton Command="Slider.DecreaseLarge" Background="#91EDCA" Style="{StaticResource SliderRepeat}"/></Track.DecreaseRepeatButton>
+      <Track.Thumb><Thumb Width="18" Height="18"><Thumb.Template><ControlTemplate TargetType="Thumb"><Grid><Ellipse Fill="#568C80" Width="18" Height="18"/><Ellipse Fill="#A5F0D8" Width="12" Height="12"/></Grid></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+      <Track.IncreaseRepeatButton><RepeatButton Command="Slider.IncreaseLarge" Background="Transparent" Style="{StaticResource SliderRepeat}"/></Track.IncreaseRepeatButton>
+     </Track>
+    </Grid>
+    <ControlTemplate.Triggers><Trigger Property="IsEnabled" Value="False"><Setter Property="Opacity" Value="0.4"/></Trigger></ControlTemplate.Triggers>
+   </ControlTemplate></Setter.Value></Setter>
+  </Style>
+ </Window.Resources>
+ <Border Margin="4" BorderThickness="1" CornerRadius="20" BorderBrush="#A293ACE0" ClipToBounds="True">
+  <Border.Background><DrawingBrush Stretch="Fill"><DrawingBrush.Drawing><DrawingGroup>
+   <GeometryDrawing Geometry="M0,0 L1,0 1,1 0,1 Z"><GeometryDrawing.Brush><LinearGradientBrush StartPoint="0,0" EndPoint="1,1"><GradientStop Color="#F5384266" Offset="0"/><GradientStop Color="#F52B3454" Offset="0.55"/><GradientStop Color="#F53A355D" Offset="1"/></LinearGradientBrush></GeometryDrawing.Brush></GeometryDrawing>
+   <GeometryDrawing Geometry="M0,0 L1,0 1,1 0,1 Z"><GeometryDrawing.Brush><RadialGradientBrush Center="0.18,0.04" GradientOrigin="0.18,0.04" RadiusX="0.85" RadiusY="0.58"><GradientStop Color="#50B8C6FF" Offset="0"/><GradientStop Color="#1E8C9FDC" Offset="0.5"/><GradientStop Color="#008C9FDC" Offset="1"/></RadialGradientBrush></GeometryDrawing.Brush></GeometryDrawing>
+   <GeometryDrawing Geometry="M0,0 L1,0 1,1 0,1 Z"><GeometryDrawing.Brush><RadialGradientBrush Center="0.96,0.95" GradientOrigin="0.96,0.95" RadiusX="0.75" RadiusY="0.55"><GradientStop Color="#3E9D86DB" Offset="0"/><GradientStop Color="#00836BB6" Offset="1"/></RadialGradientBrush></GeometryDrawing.Brush></GeometryDrawing>
+  </DrawingGroup></DrawingBrush.Drawing></DrawingBrush></Border.Background>
+  <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/></Grid.RowDefinitions>
+   <Grid Name="SettingsHeader" Margin="22,16,18,0" Background="Transparent"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="36"/></Grid.ColumnDefinitions>
+    <TextBlock Text="Настройки" FontSize="23" FontWeight="SemiBold" VerticalAlignment="Center"/>
+    <Button Name="SettingsClose" Grid.Column="1" Content="×" FontSize="23" Width="36" Height="36" Padding="0" Background="Transparent" BorderThickness="0" ToolTip="Закрыть настройки"/>
+   </Grid>
+   <ScrollViewer Name="SettingsScroll" Grid.Row="1" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"><StackPanel Margin="22,0,22,22">
+  <TextBlock Text="СТАНЦИЯ" FontSize="10" Foreground="#A4DEC9" Margin="0,18,0,8"/>
+  <Border Background="#654C5B7B" BorderBrush="#837F91B5" BorderThickness="1" CornerRadius="12" Padding="14" Margin="0,0,0,10"><StackPanel>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+    <StackPanel><TextBlock Text="Зарядка от сети" FontSize="14" FontWeight="SemiBold"/><TextBlock Name="ChargeCurrent" Text="Настройка станции: —" FontSize="10" Foreground="#BDC8DC" Margin="0,4,0,0"/></StackPanel>
+    <TextBlock Name="ChargeChoice" Grid.Column="1" Text="50 Вт" FontSize="20" Foreground="#A5F0D8" FontWeight="SemiBold" VerticalAlignment="Center"/>
+   </Grid>
+   <Slider Name="ChargeSlider" Minimum="50" Maximum="870" Value="50" SmallChange="10" LargeChange="50" TickFrequency="10" IsSnapToTickEnabled="True" IsEnabled="False" Margin="-8,9,-8,0"/>
+   <Grid Margin="0,0,0,12"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="50 Вт" FontSize="10" Foreground="#A8B7D0"/><TextBlock Grid.Column="1" Text="870 Вт" FontSize="10" Foreground="#A8B7D0" HorizontalAlignment="Right"/></Grid>
+   <Button Name="ChargeApply" Content="Применить" IsEnabled="False"/>
+  </StackPanel></Border>
+  <Border Background="#654C5B7B" BorderBrush="#837F91B5" BorderThickness="1" CornerRadius="12" Padding="14,2" Margin="0,0,0,8"><StackPanel>
+   <CheckBox Name="XBoost" IsEnabled="False"><StackPanel><TextBlock Text="X-Boost" FontSize="14" FontWeight="SemiBold"/><TextBlock Name="XBoostCurrent" Text="Состояние станции: —" FontSize="10" Foreground="#BDC8DC" Margin="0,4,0,0"/><TextBlock Text="Для совместимых мощных приборов" FontSize="10" Foreground="#BDC8DC" Margin="0,4,0,0"/></StackPanel></CheckBox>
+  </StackPanel></Border>
+  <TextBlock Name="StationControlStatus" Text="Ожидание данных станции…" FontSize="10" Foreground="#BDC8DC" TextWrapping="Wrap" Margin="0,0,0,15"/>
+  <TextBlock Text="АВТОМАТИЗАЦИИ" FontSize="10" Foreground="#A4DEC9" Margin="0,4,0,8"/>
+  <Border Background="#654C5B7B" BorderBrush="#837F91B5" BorderThickness="1" CornerRadius="12" Padding="14,2" Margin="0,0,0,6"><StackPanel>
+   <CheckBox Name="AutoHigh" Tag="High"><StackPanel><TextBlock Text="Заряд ≥ 90%  →  50 Вт" FontSize="13"/><TextBlock Text="Замедлить зарядку" FontSize="10" Foreground="#BDC8DC" Margin="0,4,0,0"/></StackPanel></CheckBox>
+   <Border Height="1" Background="#6A7899"/>
+   <CheckBox Name="AutoLow" Tag="Low"><StackPanel><TextBlock Text="Заряд ≤ 40%  →  770 Вт" FontSize="13"/><TextBlock Text="Ускорить зарядку" FontSize="10" Foreground="#BDC8DC" Margin="0,4,0,0"/></StackPanel></CheckBox>
+  </StackPanel></Border>
+  <TextBlock Name="AutomationStatus" Text="Работают, пока виджет запущен и станция в сети." FontSize="10" Foreground="#BDC8DC" TextWrapping="Wrap" Margin="0,0,0,15"/>
+  <TextBlock Text="УВЕДОМЛЕНИЯ" FontSize="10" Foreground="#A4DEC9" Margin="0,4,0,0"/>
+  <TextBlock Text="Выбери, о чём напоминать" Foreground="#BDC8DC" FontSize="12" Margin="0,5,0,15"/>
+  <CheckBox Name="LowBattery" Tag="LowBattery"><StackPanel><TextBlock Text="Низкий заряд" FontSize="13"/><TextBlock Text="Когда заряд опустится ниже 20%" FontSize="10" Foreground="#BDC8DC" Margin="0,3,0,0"/></StackPanel></CheckBox>
+  <CheckBox Name="TwoHours" Tag="TwoHours"><StackPanel><TextBlock Text="За 2 часа до отключения" FontSize="13"/><TextBlock Text="По графику черги 2.2" FontSize="10" Foreground="#BDC8DC" Margin="0,3,0,0"/></StackPanel></CheckBox>
+  <CheckBox Name="FifteenMinutes" Tag="FifteenMinutes"><StackPanel><TextBlock Text="За 15 минут до отключения" FontSize="13"/><TextBlock Text="Последнее напоминание перед отключением" FontSize="10" Foreground="#BDC8DC" Margin="0,3,0,0"/></StackPanel></CheckBox>
+  <CheckBox Name="CustomReminder" Tag="CustomReminder"><StackPanel><TextBlock Text="Своё напоминание" FontSize="13"/><TextBlock Name="CustomDescription" Text="За 1 ч до отключения" FontSize="10" Foreground="#BDC8DC" Margin="0,3,0,0"/></StackPanel></CheckBox>
+  <Border Background="#654C5B7B" BorderBrush="#708497B9" BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,0,0,5"><StackPanel>
+   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="46"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="46"/><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions>
+    <TextBlock Text="За" VerticalAlignment="Center" Margin="0,0,8,0" Foreground="#C0CAE0"/>
+    <TextBox Name="CustomHours" Grid.Column="1" Text="1" MaxLength="2" Padding="5,7" TextAlignment="Center" Background="#70556A8A" Foreground="#EDF4F8" BorderThickness="0" FontSize="14"/>
+    <TextBlock Grid.Column="2" Text="ч" VerticalAlignment="Center" Margin="5,0,8,0" Foreground="#C0CAE0"/>
+    <TextBox Name="CustomMinutes" Grid.Column="3" Text="00" MaxLength="2" Padding="5,7" TextAlignment="Center" Background="#70556A8A" Foreground="#EDF4F8" BorderThickness="0" FontSize="14"/>
+    <TextBlock Grid.Column="4" Text="мин" VerticalAlignment="Center" Margin="5,0,8,0" Foreground="#C0CAE0"/>
+    <Button Name="CustomApply" Grid.Column="5" Content="Применить" FontSize="10" Padding="7,8"/>
+   </Grid>
+   <TextBlock Text="От 1 минуты до 24 часов. «Применить» включает напоминание." FontSize="9" Foreground="#A8B7D0" TextWrapping="Wrap" Margin="0,8,0,0"/>
+  </StackPanel></Border>
+  <CheckBox Name="ScheduleChanges" Tag="ScheduleChanges"><StackPanel><TextBlock Text="Новый или изменённый график" FontSize="13"/><TextBlock Text="Без повторов для одинаковых интервалов" FontSize="10" Foreground="#BDC8DC" Margin="0,3,0,0"/></StackPanel></CheckBox>
+  <TextBlock Name="SaveStatus" Text="Переключатели сохраняются сразу, время — по «Применить»" FontSize="10" Foreground="#B1DEC9" TextWrapping="Wrap" Margin="0,10,0,14"/>
+  <Button Name="Connection" Content="Подключение EcoFlow" Margin="0,0,0,8"/>
+  <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition/></Grid.ColumnDefinitions><Button Name="Test" Content="Проверить уведомление" FontSize="10" Margin="0,0,4,0"/><Button Name="Done" Grid.Column="1" Content="Готово" Margin="4,0,0,0"/></Grid>
+ </StackPanel></ScrollViewer>
+  </Grid>
+ </Border>
+</Window>

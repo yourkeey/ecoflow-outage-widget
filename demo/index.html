@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Интерактивное демо виджета EcoFlow RIVER 2 Pro.">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <link rel="stylesheet" href="./styles.css">
+  <title>EcoFlow RIVER 2 Pro · Демо виджета</title>
+  <script src="./simulation.js" defer></script>
+  <script src="./dashboard.js" defer></script>
+</head>
+<body>
+  <main class="stage">
+    <article class="widget glass" id="widget" aria-labelledby="widget-title">
+      <header class="title-bar">
+        <h1 id="widget-title">ECOFLOW&nbsp; / &nbsp;RIVER 2 PRO</h1>
+        <button type="button" class="icon quiet" id="hide-widget" title="Скрыть виджет" aria-label="Скрыть виджет">×</button>
+      </header>
+
+      <div class="main-tabs" id="main-tabs" role="group" aria-label="Разделы виджета">
+        <button type="button" data-value="station" aria-controls="station" aria-pressed="true">Станция</button>
+        <button type="button" data-value="schedule" aria-controls="schedule" aria-pressed="false">Отключения · 2.2</button>
+      </div>
+
+      <section id="station" aria-label="Станция">
+        <p class="status" id="power-status" role="status">Демонстрация · питание от сети</p>
+        <div class="battery-row">
+          <div class="charge-number" id="charge" aria-label="Заряд батареи">76 %</div>
+          <button type="button" class="sparkline quiet" id="open-history" aria-label="Открыть историю нагрузки">
+            <canvas id="load-spark" aria-hidden="true"></canvas>
+            <span>45 мин</span>
+          </button>
+          <div class="load">
+            <span class="caption">Нагрузка</span>
+            <strong id="output-watts">— Вт</strong>
+          </div>
+        </div>
+        <div class="track" id="battery-progress" role="progressbar" aria-label="Заряд батареи" aria-valuemin="0" aria-valuemax="100" aria-valuenow="76"><div id="battery-fill"></div></div>
+        <p class="remaining" id="estimate">Время работы: —</p>
+
+        <section class="outage-card" aria-labelledby="outage-label">
+          <div class="row">
+            <h2 class="caption mint" id="outage-label">До отключения по графику</h2>
+            <button type="button" class="quiet schedule-link" id="open-schedule">График <span aria-hidden="true">↗</span></button>
+          </div>
+          <p class="countdown" id="outage-countdown">00:28:00</p>
+          <p class="hint" id="outage-hint"></p>
+          <div class="day-strip">
+            <p class="caption">Сегодня · плановые отключения</p>
+            <div class="timeline" id="station-timeline" aria-hidden="true"></div>
+            <div class="time-axis" aria-hidden="true"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+          </div>
+        </section>
+
+        <details id="station-details">
+          <summary>Подробнее</summary>
+          <div class="detail-card">
+            <dl class="readings">
+              <div><dt class="caption">Вход</dt><dd id="input-watts">— Вт</dd></div>
+              <div><dt class="caption">Энергия батареи</dt><dd id="battery-energy">— Вт·ч</dd></div>
+            </dl>
+            <dl class="readings telemetry">
+              <div><dt class="caption">Температура CPU</dt><dd id="cpu-temp">—</dd><dd class="hint" id="cpu-load"></dd></div>
+              <div><dt class="caption">Температура GPU</dt><dd id="gpu-temp">—</dd><dd class="hint" id="gpu-load"></dd></div>
+            </dl>
+            <div class="history">
+              <div class="row">
+                <h2 class="caption">История · 45 мин</h2>
+                <div class="segments" role="group" aria-label="Показания на графике" id="chart-controls">
+                  <button type="button" data-value="power" aria-pressed="true">Нагрузка</button>
+                  <button type="button" data-value="temperature" aria-pressed="false">Темп.</button>
+                </div>
+              </div>
+              <div id="chart-legend" class="legend"><span>Выход · Вт</span></div>
+              <canvas id="history-chart" tabindex="0" aria-label="История показаний. Стрелками влево и вправо можно выбрать точку." aria-describedby="chart-value"></canvas>
+              <p id="chart-value" class="hint">Наведите на график или используйте стрелки.</p>
+            </div>
+            <div class="limits">
+              <h2 class="caption">Лимиты ИИ</h2>
+              <div class="limit">
+                <div class="row"><span>Сеанс</span><strong id="session-value">38% осталось</strong></div>
+                <div class="track" id="session-progress" role="progressbar" aria-label="Остаток лимита сеанса" aria-valuemin="0" aria-valuemax="100" aria-valuenow="38"><div id="session-fill"></div></div>
+                <p class="hint" id="session-reset"></p>
+              </div>
+              <div class="limit">
+                <div class="row"><span>Неделя</span><strong id="weekly-value">64% осталось</strong></div>
+                <div class="track" id="weekly-progress" role="progressbar" aria-label="Остаток недельного лимита" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64"><div id="weekly-fill"></div></div>
+                <p class="hint" id="weekly-reset"></p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <div class="footer-controls">
+          <button type="button" id="open-settings"><span class="gear" aria-hidden="true">⚙</span> Настройки</button>
+          <div class="actions">
+            <button type="button" class="icon refresh" title="Обновить показания" aria-label="Обновить показания">↻</button>
+            <button type="button" id="pause" aria-pressed="false">Пауза</button>
+          </div>
+        </div>
+        <p class="footnote" id="clock">Демо · 14:32</p>
+      </section>
+
+      <section id="schedule" aria-label="Расписание отключений" hidden>
+        <div class="row schedule-heading">
+          <div><p class="caption">Расписание · время Киев</p><h2 id="schedule-day">Сегодня</h2></div>
+          <span class="queue-badge" aria-label="Очередь 2.2">2.2</span>
+        </div>
+        <div class="day-buttons" id="schedule-controls" role="group" aria-label="День расписания">
+          <button type="button" data-value="today" aria-pressed="true">Сегодня</button>
+          <button type="button" data-value="tomorrow" aria-pressed="false">Завтра</button>
+          <button type="button" data-value="latest" aria-pressed="false">Последний</button>
+        </div>
+        <p class="schedule-note">Демонстрационные интервалы</p>
+        <div class="schedule-card">
+          <p class="caption">Интервал по графику</p>
+          <p class="countdown" id="schedule-interval"></p>
+          <p id="schedule-summary"></p>
+        </div>
+        <div class="schedule-details">
+          <details>
+            <summary>Подробнее</summary>
+            <p class="caption timeline-heading">Плановые интервалы</p>
+            <div class="timeline" id="schedule-timeline" aria-hidden="true"></div>
+            <div class="time-axis" aria-hidden="true"><span>00</span><span>06</span><span>12</span><span>18</span><span>24</span></div>
+            <ul class="windows" id="outage-windows" aria-label="Плановые интервалы"></ul>
+          </details>
+          <button type="button" class="icon quiet refresh" title="Обновить расписание" aria-label="Обновить расписание">↻</button>
+        </div>
+        <p class="footnote">В демо показано вымышленное расписание</p>
+      </section>
+    </article>
+
+    <button type="button" class="restore glass" id="restore-widget" hidden>Открыть виджет EcoFlow</button>
+  </main>
+
+  <dialog class="settings glass" id="settings" aria-labelledby="settings-title">
+    <header class="row">
+      <h2 id="settings-title">Настройки демо</h2>
+      <button type="button" class="icon quiet" id="close-settings" aria-label="Закрыть настройки">×</button>
+    </header>
+    <div class="settings-group">
+      <p class="caption" id="power-label">Источник питания</p>
+      <div class="segments" role="group" aria-labelledby="power-label" id="grid-controls">
+        <button type="button" data-value="auto" aria-pressed="true">По графику</button>
+        <button type="button" data-value="grid" aria-pressed="false">Сеть</button>
+        <button type="button" data-value="outage" aria-pressed="false">Отключение</button>
+      </div>
+    </div>
+    <div class="settings-group">
+      <p class="caption" id="workload-label">Нагрузка ПК</p>
+      <div class="segments" role="group" aria-labelledby="workload-label" id="workload-controls">
+        <button type="button" data-value="idle" aria-pressed="false">Простой</button>
+        <button type="button" data-value="dev" aria-pressed="true">Код</button>
+        <button type="button" data-value="render" aria-pressed="false">Рендер</button>
+      </div>
+    </div>
+    <div class="settings-group">
+      <p class="caption" id="speed-label">Время · 1 мин/сек</p>
+      <div class="segments" role="group" aria-labelledby="speed-label">
+        <button type="button" id="step">+15 мин</button>
+        <button type="button" id="reset">Сбросить</button>
+      </div>
+    </div>
+  </dialog>
+</body>
+</html>
